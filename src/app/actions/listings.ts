@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { ListingFilters } from '@/types'
+import { normalizeGradeSearch, normalizeCategorySearch } from '@/lib/search-helpers'
 
 /**
  * Get listings with filters
@@ -11,6 +12,7 @@ export async function getListings(filters: ListingFilters = {}) {
     status: 'active',
   }
 
+  // Base filters (siempre se aplican)
   if (filters.schoolSlug) {
     where.school = { slug: filters.schoolSlug }
   }
@@ -41,10 +43,30 @@ export async function getListings(filters: ListingFilters = {}) {
     where.size = filters.size
   }
 
+  // Search filter (usa AND para combinar con otros filtros)
   if (filters.search) {
-    where.OR = [
-      { title: { contains: filters.search, mode: 'insensitive' } },
-      { description: { contains: filters.search, mode: 'insensitive' } },
+    const gradeVariants = normalizeGradeSearch(filters.search)
+    const categoryVariants = normalizeCategorySearch(filters.search)
+
+    where.AND = [
+      {
+        OR: [
+          { title: { contains: filters.search, mode: 'insensitive' } },
+          { description: { contains: filters.search, mode: 'insensitive' } },
+          // Buscar en nombre del nivel con variantes
+          ...gradeVariants.map(variant => ({
+            grade: {
+              name: { contains: variant, mode: 'insensitive' },
+            },
+          })),
+          // Buscar en nombre de categoría con variantes
+          ...categoryVariants.map(variant => ({
+            category: {
+              name: { contains: variant, mode: 'insensitive' },
+            },
+          })),
+        ],
+      },
     ]
   }
 
