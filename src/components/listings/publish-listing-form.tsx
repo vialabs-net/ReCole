@@ -300,6 +300,9 @@ export function PublishListingForm({ schools, categories, sellerId }: PublishLis
             className={errors.quantity ? 'border-destructive' : ''}
             min="1"
           />
+          <p className="text-xs text-muted-foreground mt-1">
+            Unidades disponibles de este artículo
+          </p>
           {errors.quantity && <p className="text-sm text-destructive mt-1">{errors.quantity}</p>}
         </div>
       </div>
@@ -335,7 +338,9 @@ export function PublishListingForm({ schools, categories, sellerId }: PublishLis
             disabled={isSubmitting}
             maxLength={10}
           />
-          <p className="text-xs text-muted-foreground mt-1">Para uniformes, calzado, etc.</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Una talla por publicación. Si tienes varias tallas, crea una publicación para cada una.
+          </p>
         </div>
       </div>
 
