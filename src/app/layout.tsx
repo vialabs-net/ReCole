@@ -12,7 +12,26 @@ export const metadata: Metadata = {
   description: 'Compra y vende artículos escolares usados entre familias del mismo colegio',
   keywords: ['marketplace', 'escolar', 'uniformes', 'libros', 'útiles', 'Chile'],
   authors: [{ name: 'ReCole' }],
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'ReCole',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    type: 'website',
+    siteName: 'ReCole',
+    title: 'ReCole - Marketplace Escolar',
+    description: 'Compra y vende artículos escolares usados entre familias del mismo colegio',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ReCole - Marketplace Escolar',
+    description: 'Compra y vende artículos escolares usados entre familias del mismo colegio',
+  },
 }
 
 export default async function RootLayout({
@@ -32,6 +51,12 @@ export default async function RootLayout({
 
   return (
     <html lang="es" suppressHydrationWarning>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        <meta name="theme-color" content="#1e40af" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+      </head>
       <body className={inter.className}>
         <div className="flex min-h-screen flex-col">
           <Header user={userData} />

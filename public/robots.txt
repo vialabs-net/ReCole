@@ -1,0 +1,6 @@
+# *
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://recole.cl/sitemap.xml
