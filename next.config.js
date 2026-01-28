@@ -15,6 +15,10 @@ const nextConfig = {
   experimental: {
     serverActions: {
       bodySizeLimit: '10mb',
+      allowedOrigins: [
+        'redesigned-rotary-phone-xg5v46v6ghv55w-3000.app.github.dev',
+        'localhost:3000',
+      ],
     },
   },
 }
