@@ -3,6 +3,8 @@
 import { prisma } from '@/lib/prisma'
 import { ListingFilters } from '@/types'
 import { normalizeGradeSearch, normalizeCategorySearch } from '@/lib/search-helpers'
+import { revalidatePath } from 'next/cache'
+import { getUser, getUserProfile } from './auth'
 
 /**
  * Get listings with filters
@@ -115,4 +117,83 @@ export async function getCategories() {
   return prisma.category.findMany({
     orderBy: { order: 'asc' },
   })
+}
+
+/**
+ * Get all schools
+ */
+export async function getSchools() {
+  return prisma.school.findMany({
+    orderBy: { name: 'asc' },
+  })
+}
+
+/**
+ * Get grades by school
+ */
+export async function getGradesBySchool(schoolId: string) {
+  return prisma.grade.findMany({
+    where: { schoolId },
+    orderBy: { order: 'asc' },
+  })
+}
+
+/**
+ * Create a new listing
+ */
+export async function createListing(data: {
+  schoolId: string
+  gradeId: string
+  categoryId: string
+  title: string
+  description: string
+  price: number
+  currency: string
+  condition: string
+  size?: string
+  quantityAvailable: number
+  images: Array<{ blobUrl: string; order: number }>
+}) {
+  const user = await getUser()
+  if (!user) {
+    throw new Error('Debes iniciar sesión para publicar')
+  }
+
+  const profile = await getUserProfile()
+  if (!profile) {
+    throw new Error('Debes completar tu perfil primero')
+  }
+
+  // Create listing with images
+  const listing = await prisma.listing.create({
+    data: {
+      schoolId: data.schoolId,
+      gradeId: data.gradeId,
+      categoryId: data.categoryId,
+      sellerId: profile.id,
+      title: data.title,
+      description: data.description,
+      price: Math.round(data.price * 100), // Convert to centavos
+      currency: data.currency,
+      condition: data.condition,
+      size: data.size || null,
+      quantityAvailable: data.quantityAvailable,
+      status: 'active',
+      images: {
+        create: data.images.map((img) => ({
+          blobUrl: img.blobUrl,
+          order: img.order,
+        })),
+      },
+    },
+    include: {
+      school: true,
+    },
+  })
+
+  // Revalidate the school page
+  revalidatePath(`/c/${listing.school.slug}`)
+  revalidatePath('/mis-publicaciones')
+
+  return listing
 }
