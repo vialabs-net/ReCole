@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get('code')
   const redirect = requestUrl.searchParams.get('redirect') ?? '/'
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || requestUrl.origin
+  const baseUrl = process.env.APP_URL || requestUrl.origin
 
   if (code) {
     const supabase = await createClient()
