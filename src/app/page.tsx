@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { ArrowRight, Recycle, Users, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { getSchools } from './actions/schools'
 import { getSchoolStats } from './actions/schools'
+import { SchoolsList } from '@/components/schools/schools-list'
 
 export default async function Home() {
   const schools = await getSchools()
@@ -97,36 +97,7 @@ export default async function Home() {
             </p>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
-            {schoolsWithStats.map((school) => (
-              <Link key={school.id} href={`/c/${school.slug}`}>
-                <Card className="h-full transition-all hover:shadow-lg hover:scale-105">
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span className="line-clamp-2">{school.name}</span>
-                    </CardTitle>
-                    <CardDescription>
-                      {school.activeListings > 0 ? (
-                        <span className="text-primary font-medium">
-                          {school.activeListings} {school.activeListings === 1 ? 'artículo disponible' : 'artículos disponibles'}
-                        </span>
-                      ) : (
-                        <span className="text-muted-foreground">
-                          Sé el primero en publicar
-                        </span>
-                      )}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button variant="outline" className="w-full">
-                      Ver Marketplace
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+          <SchoolsList schools={schoolsWithStats} />
         )}
       </section>
 
