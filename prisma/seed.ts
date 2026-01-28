@@ -65,9 +65,9 @@ async function main() {
     data: {
       slug: 'lincoln-chicureo',
       name: 'Lincoln International Academy - Chicureo',
-      logoUrl: 'https://lintac.cl/wp-content/uploads/2024/06/Logo-Lintac-2.pdf', // TODO: Extract PNG from PDF
-      primaryColor: '#1e40af', // Blue - adjust to actual Lincoln colors
-      secondaryColor: '#3b82f6',
+      logoUrl: '/logos/lincoln-logo.svg',
+      primaryColor: '#3B4575', // Navy blue from official logo
+      secondaryColor: '#B8934A', // Gold from official logo
       isActive: true,
     },
   })
@@ -76,9 +76,9 @@ async function main() {
     data: {
       slug: 'lincoln-lo-barnechea',
       name: 'Lincoln International Academy - Lo Barnechea',
-      logoUrl: 'https://lintac.cl/wp-content/uploads/2024/06/Logo-Lintac-2.pdf', // TODO: Extract PNG from PDF
-      primaryColor: '#1e40af',
-      secondaryColor: '#3b82f6',
+      logoUrl: '/logos/lincoln-logo.svg',
+      primaryColor: '#3B4575', // Navy blue from official logo
+      secondaryColor: '#B8934A', // Gold from official logo
       isActive: true,
     },
   })
