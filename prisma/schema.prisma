@@ -11,8 +11,135 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Placeholder - full schema in next commit
 model School {
-  id   String @id @default(cuid())
-  name String
+  id             String      @id @default(cuid())
+  slug           String      @unique
+  name           String
+  logoUrl        String?
+  primaryColor   String      @default("#1e40af")
+  secondaryColor String      @default("#3b82f6")
+  isActive       Boolean     @default(true)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  grades         Grade[]
+  listings       Listing[]
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+model Grade {
+  id        String    @id @default(cuid())
+  schoolId  String
+  slug      String
+  name      String
+  category  String    // "preescolar", "basica", "media"
+  order     Int
+  isActive  Boolean   @default(true)
+
+  school    School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  listings  Listing[]
+
+  @@unique([schoolId, slug])
+  @@index([schoolId, isActive, order])
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  name      String
+  order     Int
+
+  listings  Listing[]
+
+  @@index([slug])
+}
+
+model UserProfile {
+  id        String    @id @default(cuid())
+  authId    String    @unique  // Supabase Auth UUID
+  email     String    @unique
+  name      String
+  phone     String    // +56912345678 (E.164 format)
+  avatarUrl String?
+  role      String    @default("user") // "user", "admin"
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  listings  Listing[]
+  cart      Cart?
+
+  @@index([authId])
+  @@index([email])
+}
+
+model Listing {
+  id                String         @id @default(cuid())
+  schoolId          String
+  gradeId           String
+  categoryId        String
+  sellerId          String
+
+  title             String
+  description       String         @db.Text
+  price             Int            // Centavos CLP
+  currency          String         @default("CLP")
+  condition         String         // "new", "like_new", "good", "fair"
+  size              String?        // "2", "4", "6", "S", "M", "L", null
+  quantityAvailable Int            @default(1)
+  quantitySold      Int            @default(0)
+  status            String         @default("active") // "active", "sold", "deleted"
+
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  school            School         @relation(fields: [schoolId], references: [id])
+  grade             Grade          @relation(fields: [gradeId], references: [id])
+  category          Category       @relation(fields: [categoryId], references: [id])
+  seller            UserProfile    @relation(fields: [sellerId], references: [id])
+  images            ListingImage[]
+  cartItems         CartItem[]
+
+  @@index([schoolId, status, createdAt(sort: Desc)])
+  @@index([schoolId, gradeId, status, createdAt(sort: Desc)])
+  @@index([schoolId, categoryId, status, createdAt(sort: Desc)])
+  @@index([sellerId])
+  @@index([status, createdAt(sort: Desc)])
+}
+
+model ListingImage {
+  id        String   @id @default(cuid())
+  listingId String
+  blobUrl   String
+  order     Int
+  createdAt DateTime @default(now())
+
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, order])
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  user      UserProfile @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  listingId String
+  quantity  Int      @default(1)
+  addedAt   DateTime @default(now())
+
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  listing   Listing  @relation(fields: [listingId], references: [id])
+
+  @@unique([cartId, listingId])
+  @@index([cartId])
 }
