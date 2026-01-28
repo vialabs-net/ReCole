@@ -36,7 +36,7 @@ export function OnboardingForm({ user }: OnboardingFormProps) {
         phone: formData.phone,
       })
 
-      router.push('/')
+      router.push('/#colegios')
       router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Ocurrió un error')
