@@ -197,3 +197,72 @@ export async function createListing(data: {
 
   return listing
 }
+
+/**
+ * Get user's own listings
+ */
+export async function getMyListings() {
+  const user = await getUser()
+  if (!user) {
+    return []
+  }
+
+  const profile = await getUserProfile()
+  if (!profile) {
+    return []
+  }
+
+  return prisma.listing.findMany({
+    where: { sellerId: profile.id },
+    include: {
+      school: true,
+      grade: true,
+      category: true,
+      images: {
+        orderBy: { order: 'asc' },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  })
+}
+
+/**
+ * Delete a listing
+ */
+export async function deleteListing(listingId: string) {
+  const user = await getUser()
+  if (!user) {
+    throw new Error('Debes iniciar sesión')
+  }
+
+  const profile = await getUserProfile()
+  if (!profile) {
+    throw new Error('Perfil no encontrado')
+  }
+
+  // Verify ownership
+  const listing = await prisma.listing.findUnique({
+    where: { id: listingId },
+    include: { school: true },
+  })
+
+  if (!listing) {
+    throw new Error('Publicación no encontrada')
+  }
+
+  if (listing.sellerId !== profile.id) {
+    throw new Error('No tienes permiso para eliminar esta publicación')
+  }
+
+  // Delete listing (images will be cascade deleted)
+  await prisma.listing.delete({
+    where: { id: listingId },
+  })
+
+  revalidatePath(`/c/${listing.school.slug}`)
+  revalidatePath('/mis-publicaciones')
+
+  return { success: true }
+}
