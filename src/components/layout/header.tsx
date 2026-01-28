@@ -11,9 +11,10 @@ interface HeaderProps {
     name: string
     email: string
   } | null
+  cartItemsCount?: number
 }
 
-export function Header({ user }: HeaderProps) {
+export function Header({ user, cartItemsCount = 0 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
@@ -55,10 +56,15 @@ export function Header({ user }: HeaderProps) {
           <div className="flex items-center space-x-2">
             {user ? (
               <>
-                <Button variant="ghost" size="icon" asChild className="hidden md:flex">
+                <Button variant="ghost" size="icon" asChild className="hidden md:flex relative">
                   <Link href="/carrito">
                     <ShoppingCart className="h-5 w-5" />
                     <span className="sr-only">Carrito</span>
+                    {cartItemsCount > 0 && (
+                      <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
+                        {cartItemsCount > 99 ? '99+' : cartItemsCount}
+                      </span>
+                    )}
                   </Link>
                 </Button>
                 <Button variant="ghost" size="icon" asChild className="hidden md:flex">
@@ -93,6 +99,7 @@ export function Header({ user }: HeaderProps) {
         open={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
         user={user}
+        cartItemsCount={cartItemsCount}
       />
     </>
   )

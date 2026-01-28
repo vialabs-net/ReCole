@@ -12,9 +12,10 @@ interface MobileNavProps {
     name: string
     email: string
   } | null
+  cartItemsCount?: number
 }
 
-export function MobileNav({ open, onClose, user }: MobileNavProps) {
+export function MobileNav({ open, onClose, user, cartItemsCount = 0 }: MobileNavProps) {
   // Close on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -80,10 +81,17 @@ export function MobileNav({ open, onClose, user }: MobileNavProps) {
               </Link>
               <Link
                 href="/carrito"
-                className="flex items-center space-x-3 text-sm font-medium"
+                className="flex items-center space-x-3 text-sm font-medium relative"
                 onClick={onClose}
               >
-                <ShoppingCart className="h-5 w-5" />
+                <div className="relative">
+                  <ShoppingCart className="h-5 w-5" />
+                  {cartItemsCount > 0 && (
+                    <span className="absolute -top-2 -right-2 h-4 w-4 rounded-full bg-primary text-[9px] font-bold text-primary-foreground flex items-center justify-center">
+                      {cartItemsCount > 99 ? '99+' : cartItemsCount}
+                    </span>
+                  )}
+                </div>
                 <span>Carrito</span>
               </Link>
               <Link

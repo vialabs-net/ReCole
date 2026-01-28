@@ -113,7 +113,7 @@ prisma/
 1. Ir a [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
 2. Crear "OAuth 2.0 Client ID" tipo "Web application"
 3. Authorized redirect URIs:
-   - `https://eywzkqmceqrhpskeacxi.supabase.co/auth/v1/callback`
+   - `https://XXX.supabase.co/auth/v1/callback`
    - `http://localhost:3000/auth/callback` (desarrollo)
 4. Copiar Client ID y Client Secret
 5. En Supabase Dashboard → Authentication → Providers → Google:

@@ -4,6 +4,7 @@ import './globals.css'
 import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { getUser, getUserProfile } from './actions/auth'
+import { getCartItemsCount } from './actions/cart'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -49,6 +50,9 @@ export default async function RootLayout({
       }
     : null
 
+  // Get cart items count for badge
+  const cartItemsCount = user ? await getCartItemsCount() : 0
+
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
@@ -59,7 +63,7 @@ export default async function RootLayout({
       </head>
       <body className={inter.className}>
         <div className="flex min-h-screen flex-col">
-          <Header user={userData} />
+          <Header user={userData} cartItemsCount={cartItemsCount} />
           <main className="flex-1">{children}</main>
           <Footer />
         </div>
