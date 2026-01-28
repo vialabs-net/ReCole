@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, MapPin, Calendar, Package, MessageCircle } from 'lucide-react'
+import { ArrowLeft, MapPin, Calendar, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
 import { getListingById } from '@/app/actions/listings'
-import { formatPrice, formatPhone } from '@/lib/utils'
+import { AddToCartButton } from '@/components/listings/add-to-cart-button'
+import { formatPrice } from '@/lib/utils'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 
@@ -28,12 +28,6 @@ export default async function ListingPage({ params }: ListingPageProps) {
   if (!listing) {
     notFound()
   }
-
-  // Generate WhatsApp link
-  const whatsappMessage = encodeURIComponent(
-    `Hola! Me interesa tu publicación "${listing.title}" en ReCole (${formatPrice(listing.price, listing.currency)})`
-  )
-  const whatsappLink = `https://wa.me/${listing.seller.phone.replace('+', '')}?text=${whatsappMessage}`
 
   const primaryImage = listing.images[0]?.blobUrl || '/placeholder-product.png'
 
@@ -70,7 +64,7 @@ export default async function ListingPage({ params }: ListingPageProps) {
             {/* Thumbnails if more images */}
             {listing.images.length > 1 && (
               <div className="grid grid-cols-4 gap-2">
-                {listing.images.slice(1, 5).map((image, index) => (
+                {listing.images.slice(1, 5).map((image) => (
                   <div
                     key={image.id}
                     className="aspect-square rounded-md overflow-hidden bg-muted cursor-pointer hover:opacity-75 transition"
@@ -132,32 +126,18 @@ export default async function ListingPage({ params }: ListingPageProps) {
               )}
             </div>
 
-            {/* Contact */}
-            <Card className="mb-6">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="font-semibold mb-1">Vendedor</h3>
-                    <p className="text-muted-foreground">{listing.seller.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {formatPhone(listing.seller.phone)}
-                    </p>
-                  </div>
-                </div>
+            {/* Add to Cart */}
+            <div className="mb-6 space-y-3">
+              <AddToCartButton
+                listingId={listing.id}
+                quantityAvailable={listing.quantityAvailable}
+                className="w-full"
+              />
 
-                <Button asChild className="w-full" size="lg">
-                  <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle className="h-5 w-5 mr-2" />
-                    Contactar por WhatsApp
-                  </a>
-                </Button>
-
-                <p className="text-xs text-muted-foreground text-center mt-4">
-                  Al contactar, serás redirigido a WhatsApp para coordinar la
-                  compra directamente con el vendedor.
-                </p>
-              </CardContent>
-            </Card>
+              <p className="text-xs text-muted-foreground text-center">
+                Agrega al carrito para ver información de contacto del vendedor
+              </p>
+            </div>
 
             {/* Description */}
             <div className="mb-6">
@@ -171,6 +151,10 @@ export default async function ListingPage({ params }: ListingPageProps) {
             <div>
               <h3 className="font-semibold mb-3">Detalles</h3>
               <dl className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <dt className="text-muted-foreground">Vendedor</dt>
+                  <dd className="font-medium">{listing.seller.name}</dd>
+                </div>
                 <div>
                   <dt className="text-muted-foreground">Nivel</dt>
                   <dd className="font-medium">{listing.grade.name}</dd>
@@ -214,7 +198,7 @@ export default async function ListingPage({ params }: ListingPageProps) {
 
       {/* Mobile Sticky Footer */}
       <div className="lg:hidden sticky bottom-0 border-t bg-background p-4">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between gap-4">
           <div>
             <div className="text-2xl font-bold text-primary">
               {formatPrice(listing.price, listing.currency)}
@@ -223,12 +207,11 @@ export default async function ListingPage({ params }: ListingPageProps) {
               {listing.quantityAvailable} disponibles
             </div>
           </div>
-          <Button asChild size="lg">
-            <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="h-5 w-5 mr-2" />
-              Contactar
-            </a>
-          </Button>
+          <AddToCartButton
+            listingId={listing.id}
+            quantityAvailable={listing.quantityAvailable}
+            size="lg"
+          />
         </div>
       </div>
     </div>
