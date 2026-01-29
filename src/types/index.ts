@@ -25,6 +25,9 @@ export type UserRole = 'user' | 'admin'
 // Grade categories
 export type GradeCategory = 'preescolar' | 'basica' | 'media'
 
+// Sort options
+export type ListingSort = 'recent' | 'price_asc' | 'price_desc'
+
 // Filter types
 export interface ListingFilters {
   schoolSlug?: string
@@ -35,6 +38,7 @@ export interface ListingFilters {
   maxPrice?: number
   search?: string
   size?: string
+  sort?: ListingSort
 }
 
 // Form types

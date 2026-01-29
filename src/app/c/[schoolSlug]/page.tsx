@@ -16,6 +16,7 @@ interface SchoolPageProps {
     search?: string
     minPrice?: string
     maxPrice?: string
+    sort?: 'recent' | 'price_asc' | 'price_desc'
   }
 }
 
@@ -37,6 +38,7 @@ export default async function SchoolPage({ params, searchParams }: SchoolPagePro
       search: filters.search,
       minPrice: filters.minPrice ? parseInt(filters.minPrice) : undefined,
       maxPrice: filters.maxPrice ? parseInt(filters.maxPrice) : undefined,
+      sort: filters.sort,
     }),
     getCategories(),
   ])

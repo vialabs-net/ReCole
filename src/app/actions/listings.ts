@@ -72,6 +72,14 @@ export async function getListings(filters: ListingFilters = {}) {
     ]
   }
 
+  // Determine sort order
+  let orderBy: any = { createdAt: 'desc' }
+  if (filters.sort === 'price_asc') {
+    orderBy = { price: 'asc' }
+  } else if (filters.sort === 'price_desc') {
+    orderBy = { price: 'desc' }
+  }
+
   const listings = await prisma.listing.findMany({
     where,
     include: {
@@ -83,9 +91,7 @@ export async function getListings(filters: ListingFilters = {}) {
         orderBy: { order: 'asc' },
       },
     },
-    orderBy: {
-      createdAt: 'desc',
-    },
+    orderBy,
     take: 24, // Pagination: 24 items per page
   })
 
