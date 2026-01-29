@@ -65,9 +65,9 @@ async function main() {
     data: {
       slug: 'lincoln-chicureo',
       name: 'Lincoln International Academy - Chicureo',
-      logoUrl: '/logos/lincoln-logo.svg',
-      primaryColor: '#3B4575', // Navy blue from official logo
-      secondaryColor: '#B8934A', // Gold from official logo
+      logoUrl: '/logos/lintac-logo.png',
+      primaryColor: '#3B4575',
+      secondaryColor: '#C4A32A',
       isActive: true,
     },
   })
@@ -76,9 +76,9 @@ async function main() {
     data: {
       slug: 'lincoln-lo-barnechea',
       name: 'Lincoln International Academy - Lo Barnechea',
-      logoUrl: '/logos/lincoln-logo.svg',
-      primaryColor: '#3B4575', // Navy blue from official logo
-      secondaryColor: '#B8934A', // Gold from official logo
+      logoUrl: '/logos/lintac-logo.png',
+      primaryColor: '#3B4575',
+      secondaryColor: '#C4A32A',
       isActive: true,
     },
   })
