@@ -21,7 +21,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/colegios" className="text-muted-foreground hover:text-foreground">
+                <Link href="/#colegios" className="text-muted-foreground hover:text-foreground">
                   Colegios
                 </Link>
               </li>
@@ -51,9 +51,12 @@ export function Footer() {
 
           <div>
             <h3 className="mb-4 text-sm font-semibold">Contacto</h3>
-            <p className="text-sm text-muted-foreground">
-              contacto@recole.cl
-            </p>
+            <a
+              href="mailto:lccastellanosm@gmail.com"
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              lccastellanosm@gmail.com
+            </a>
           </div>
         </div>
 
