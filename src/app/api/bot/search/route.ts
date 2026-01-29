@@ -3,14 +3,12 @@ import { prisma } from '@/lib/prisma'
 import { normalizeGradeSearch, normalizeCategorySearch } from '@/lib/search-helpers'
 import { Prisma } from '@prisma/client'
 
-const BOT_API_KEY = process.env.BOT_API_KEY
-
 export async function GET(request: NextRequest) {
-  // Autenticación simple con API key
-  if (BOT_API_KEY) {
+  const apiKey = process.env.BOT_API_KEY
+  if (apiKey) {
     const authHeader = request.headers.get('authorization')
     const token = authHeader?.replace('Bearer ', '')
-    if (token !== BOT_API_KEY) {
+    if (token !== apiKey) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
   }
