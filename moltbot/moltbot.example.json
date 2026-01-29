@@ -1,0 +1,28 @@
+{
+  "$schema": "https://docs.molt.bot/schema/config.json",
+  "agent": {
+    "model": "anthropic/claude-sonnet-4",
+    "groupChat": {
+      "historyLimit": 50,
+      "mentionPatterns": ["@recole", "@ReCole"]
+    }
+  },
+  "channels": {
+    "whatsapp": {
+      "enabled": true,
+      "groupPolicy": "allowlist",
+      "groupAllowFrom": [],
+      "groups": {
+        "*": {
+          "requireMention": false
+        }
+      }
+    }
+  },
+  "skills": {
+    "workspace": "./skills"
+  },
+  "env": {
+    "RECOLE_API_URL": "https://recole.cl"
+  }
+}
