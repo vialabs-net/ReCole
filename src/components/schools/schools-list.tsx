@@ -63,7 +63,7 @@ export function SchoolsList({ schools }: SchoolsListProps) {
       {filteredSchools.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-muted-foreground">
-            No se encontraron colegios que coincidan con "{searchQuery}"
+            No se encontraron colegios que coincidan con &quot;{searchQuery}&quot;
           </p>
           <Button
             variant="outline"

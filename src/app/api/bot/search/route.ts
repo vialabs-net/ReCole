@@ -44,15 +44,19 @@ export async function GET(request: NextRequest) {
     const gradeVariants = normalizeGradeSearch(query)
     const categoryVariants = normalizeCategorySearch(query)
 
+    const gradeConditions: Prisma.ListingWhereInput[] = gradeVariants.map(variant => ({
+      grade: { is: { name: { contains: variant, mode: 'insensitive' } } },
+    }))
+
+    const categoryConditions: Prisma.ListingWhereInput[] = categoryVariants.map(variant => ({
+      category: { is: { name: { contains: variant, mode: 'insensitive' } } },
+    }))
+
     where.OR = [
       { title: { contains: query, mode: 'insensitive' } },
       { description: { contains: query, mode: 'insensitive' } },
-      ...gradeVariants.map(variant => ({
-        grade: { name: { contains: variant, mode: 'insensitive' } },
-      })),
-      ...categoryVariants.map(variant => ({
-        category: { name: { contains: variant, mode: 'insensitive' } },
-      })),
+      ...gradeConditions,
+      ...categoryConditions,
     ]
 
     const listings = await prisma.listing.findMany({

@@ -33,8 +33,8 @@ describe('GET /api/bot/search', () => {
   })
 
   async function importRoute() {
-    const module = await import('./route')
-    return module.GET
+    const routeModule = await import('./route')
+    return routeModule.GET
   }
 
   it('returns 400 when query param is missing', async () => {
