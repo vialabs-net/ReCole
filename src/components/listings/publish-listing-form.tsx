@@ -17,6 +17,7 @@ import {
 import { createListing, getGradesBySchool } from '@/app/actions/listings'
 import { upload } from '@vercel/blob/client'
 import imageCompression from 'browser-image-compression'
+import { toast } from 'sonner'
 
 interface PublishListingFormProps {
   schools: Array<{ id: string; name: string; slug: string }>
@@ -161,13 +162,12 @@ export function PublishListingForm({ schools, categories, sellerId }: PublishLis
         images: uploadedImages,
       })
 
-      // Redirect to listing
+      toast.success('Publicación creada exitosamente')
       router.push(`/listing/${listing.id}`)
     } catch (error) {
-      console.error('Error creating listing:', error)
-      setErrors({
-        submit: error instanceof Error ? error.message : 'Error al crear la publicación',
-      })
+      const message = error instanceof Error ? error.message : 'Error al crear la publicación'
+      toast.error(message)
+      setErrors({ submit: message })
       setIsSubmitting(false)
       setUploadingImages(false)
     }

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ShoppingCart, Check, Minus, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { addToCart } from '@/app/actions/cart'
+import { toast } from 'sonner'
 
 interface AddToCartButtonProps {
   listingId: string
@@ -31,8 +32,8 @@ export function AddToCartButton({
       setIsLoading(true)
       await addToCart(listingId, quantity)
       setIsAdded(true)
+      toast.success(quantity > 1 ? `${quantity} unidades agregadas al carrito` : 'Agregado al carrito')
 
-      // Reset after 2 seconds
       setTimeout(() => {
         setIsAdded(false)
         setQuantity(1)
@@ -41,10 +42,10 @@ export function AddToCartButton({
       router.refresh()
     } catch (error) {
       if (error instanceof Error && error.message.includes('iniciar sesión')) {
-        // Redirect to login
+        toast.error('Debes iniciar sesión para agregar al carrito')
         router.push(`/login?redirect=/listing/${listingId}`)
       } else {
-        console.error('Error adding to cart:', error)
+        toast.error('Error al agregar al carrito')
       }
     } finally {
       setIsLoading(false)

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { updateCartItemQuantity, removeFromCart } from '@/app/actions/cart'
 import { formatPrice } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 interface CartItemProps {
   item: {
@@ -51,7 +52,7 @@ export function CartItem({ item }: CartItemProps) {
       await updateCartItemQuantity(item.id, newQuantity)
       router.refresh()
     } catch (error) {
-      console.error('Error updating quantity:', error)
+      toast.error('Error al actualizar cantidad')
     } finally {
       setIsUpdating(false)
     }
@@ -61,9 +62,10 @@ export function CartItem({ item }: CartItemProps) {
     try {
       setIsRemoving(true)
       await removeFromCart(item.id)
+      toast.success('Producto eliminado del carrito')
       router.refresh()
     } catch (error) {
-      console.error('Error removing item:', error)
+      toast.error('Error al eliminar producto')
       setIsRemoving(false)
     }
   }
