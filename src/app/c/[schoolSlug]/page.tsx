@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { getSchoolBySlug } from '@/app/actions/schools'
 import { getListings, getCategories } from '@/app/actions/listings'
 import { ListingCard } from '@/components/listings/listing-card'
@@ -50,13 +51,12 @@ export default async function SchoolPage({ params, searchParams }: SchoolPagePro
         }}
       >
         <div className="container px-4 py-8">
-          <div className="flex items-center gap-4 mb-4">
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/">
-                <ArrowLeft className="h-5 w-5" />
-              </Link>
-            </Button>
-            <div className="flex-1">
+          <Breadcrumb
+            items={[{ label: school.name }]}
+            className="mb-4"
+          />
+          <div className="flex items-center justify-between gap-4">
+            <div>
               <h1 className="text-3xl font-bold mb-1">{school.name}</h1>
               <p className="text-muted-foreground">
                 {listings.length} {listings.length === 1 ? 'artículo disponible' : 'artículos disponibles'}
@@ -64,7 +64,7 @@ export default async function SchoolPage({ params, searchParams }: SchoolPagePro
             </div>
             <Button asChild className="hidden md:flex">
               <Link href="/publicar">
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="h-4 w-4 mr-2" aria-hidden="true" />
                 Publicar
               </Link>
             </Button>
@@ -112,9 +112,9 @@ export default async function SchoolPage({ params, searchParams }: SchoolPagePro
 
       {/* Mobile FAB */}
       <div className="md:hidden fixed bottom-6 right-6">
-        <Button asChild size="lg" className="rounded-full shadow-lg h-14 w-14 p-0">
+        <Button asChild size="lg" className="rounded-full shadow-lg h-14 w-14 p-0" aria-label="Publicar artículo">
           <Link href="/publicar">
-            <Plus className="h-6 w-6" />
+            <Plus className="h-6 w-6" aria-hidden="true" />
           </Link>
         </Button>
       </div>

@@ -1,9 +1,8 @@
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, MapPin, Calendar, Package } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { MapPin, Calendar, Package } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { getListingById } from '@/app/actions/listings'
 import { AddToCartButton } from '@/components/listings/add-to-cart-button'
 import { formatPrice } from '@/lib/utils'
@@ -37,12 +36,12 @@ export default async function ListingPage({ params }: ListingPageProps) {
       {/* Header */}
       <div className="border-b bg-background sticky top-16 z-10">
         <div className="container px-4 py-4">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href={`/c/${listing.school.slug}`}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Volver al marketplace
-            </Link>
-          </Button>
+          <Breadcrumb
+            items={[
+              { label: listing.school.name, href: `/c/${listing.school.slug}` },
+              { label: listing.title },
+            ]}
+          />
         </div>
       </div>
 
@@ -100,11 +99,11 @@ export default async function ListingPage({ params }: ListingPageProps) {
 
               <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                 <div className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
+                  <MapPin className="h-4 w-4" aria-hidden="true" />
                   <span>{listing.school.name}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
+                  <Calendar className="h-4 w-4" aria-hidden="true" />
                   <span>
                     {format(new Date(listing.createdAt), "d 'de' MMMM", {
                       locale: es,
@@ -119,7 +118,7 @@ export default async function ListingPage({ params }: ListingPageProps) {
 
               {listing.quantityAvailable > 1 && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-                  <Package className="h-4 w-4" />
+                  <Package className="h-4 w-4" aria-hidden="true" />
                   <span>
                     {listing.quantityAvailable} unidades disponibles
                   </span>
