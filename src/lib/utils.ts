@@ -17,7 +17,7 @@ export function formatPrice(cents: number, currency: string = 'CLP'): string {
 export function formatPhone(phone: string): string {
   // Formato: +56912345678 → +56 9 1234 5678
   if (phone.startsWith('+569')) {
-    const number = phone.slice(3)
+    const number = phone.slice(4) // Skip "+569" prefix
     return `+56 9 ${number.slice(0, 4)} ${number.slice(4)}`
   }
   return phone
