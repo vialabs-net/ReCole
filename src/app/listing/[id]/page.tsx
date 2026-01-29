@@ -20,6 +20,9 @@ const conditionLabels: Record<string, string> = {
   fair: 'Aceptable',
 }
 
+// Simple blur placeholder data URL
+const blurDataURL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAgEDAwUBAAAAAAAAAAAAAQIDAAQRBSExEhMiQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gAMAwEAAhEDEQA/AJmm3V1Bc3KXc0k6d0kLI5YDAGBvgb5PlWrqKSilBOxiT9Soq1K6jMqeP//Z'
+
 export default async function ListingPage({ params }: ListingPageProps) {
   const { id } = await params
 
@@ -75,6 +78,8 @@ export default async function ListingPage({ params }: ListingPageProps) {
                       fill
                       className="object-cover"
                       sizes="25vw"
+                      placeholder="blur"
+                      blurDataURL={blurDataURL}
                     />
                   </div>
                 ))}
