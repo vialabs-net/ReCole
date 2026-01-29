@@ -2,9 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { normalizeGradeSearch, normalizeCategorySearch } from '@/lib/search-helpers'
 import { Prisma } from '@prisma/client'
+import { BOT_API_LIMITS } from '@/lib/constants'
 
 export async function GET(request: NextRequest) {
   const apiKey = process.env.BOT_API_KEY
+
+  // Require API key in production
+  if (process.env.NODE_ENV === 'production' && !apiKey) {
+    console.error('BOT_API_KEY not configured in production')
+    return NextResponse.json({ error: 'API no configurada' }, { status: 500 })
+  }
+
+  // Validate API key if configured
   if (apiKey) {
     const authHeader = request.headers.get('authorization')
     const token = authHeader?.replace('Bearer ', '')
@@ -17,12 +26,14 @@ export async function GET(request: NextRequest) {
   const query = searchParams.get('q')
   const schoolName = searchParams.get('school')
   const size = searchParams.get('size')
-  const limitParam = parseInt(searchParams.get('limit') || '5')
-  const limit = Number.isNaN(limitParam) ? 5 : Math.min(Math.max(limitParam, 1), 10)
+  const limitParam = parseInt(searchParams.get('limit') || String(BOT_API_LIMITS.DEFAULT_LIMIT))
+  const limit = Number.isNaN(limitParam)
+    ? BOT_API_LIMITS.DEFAULT_LIMIT
+    : Math.min(Math.max(limitParam, 1), BOT_API_LIMITS.MAX_LIMIT)
 
-  if (!query || query.trim().length < 2) {
+  if (!query || query.trim().length < BOT_API_LIMITS.MIN_QUERY_LENGTH) {
     return NextResponse.json(
-      { error: 'Parámetro "q" requerido (mínimo 2 caracteres)' },
+      { error: `Parámetro "q" requerido (mínimo ${BOT_API_LIMITS.MIN_QUERY_LENGTH} caracteres)` },
       { status: 400 }
     )
   }
