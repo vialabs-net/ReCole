@@ -22,7 +22,6 @@ import { toast } from 'sonner'
 interface PublishListingFormProps {
   schools: Array<{ id: string; name: string; slug: string }>
   categories: Array<{ id: string; name: string; slug: string }>
-  sellerId: string
 }
 
 const CONDITION_OPTIONS = [
@@ -32,7 +31,7 @@ const CONDITION_OPTIONS = [
   { value: 'fair', label: 'Aceptable' },
 ]
 
-export function PublishListingForm({ schools, categories, sellerId }: PublishListingFormProps) {
+export function PublishListingForm({ schools, categories }: PublishListingFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})

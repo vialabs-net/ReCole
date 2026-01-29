@@ -44,7 +44,7 @@ export default async function PublishPage() {
             </p>
           </div>
 
-          <PublishListingForm schools={schools} categories={categories} sellerId={profile.id} />
+          <PublishListingForm schools={schools} categories={categories} />
         </div>
       </div>
     </div>

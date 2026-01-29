@@ -1,26 +1,30 @@
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client'
 import { NextResponse } from 'next/server'
+import { getUser } from '@/app/actions/auth'
 
 export async function POST(request: Request): Promise<NextResponse> {
+  // Require authentication for uploads
+  const user = await getUser()
+  if (!user) {
+    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+  }
+
   const body = (await request.json()) as HandleUploadBody
 
   try {
     const jsonResponse = await handleUpload({
       body,
       request,
-      onBeforeGenerateToken: async (pathname: string) => {
-        // You could add authentication here
-        // For now, we'll allow uploads for any authenticated user
+      onBeforeGenerateToken: async () => {
         return {
           allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
           tokenPayload: JSON.stringify({
-            // Optional: add user ID or other metadata
+            userId: user.id,
           }),
         }
       },
-      onUploadCompleted: async ({ blob, tokenPayload }) => {
-        // Optional: You could save blob info to database here
-        console.log('Upload completed:', blob.url)
+      onUploadCompleted: async () => {
+        // Upload completed - blob info could be saved to database here if needed
       },
     })
 
