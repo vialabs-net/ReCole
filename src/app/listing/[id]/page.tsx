@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, MapPin, Calendar, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -50,31 +51,31 @@ export default async function ListingPage({ params }: ListingPageProps) {
         <div className="grid gap-8 lg:grid-cols-2 max-w-6xl mx-auto">
           {/* Images */}
           <div>
-            <div className="aspect-square w-full overflow-hidden rounded-lg bg-muted mb-4">
-              {/* Placeholder for image - will be replaced with next/image */}
-              <div
-                className="h-full w-full bg-cover bg-center"
-                style={{
-                  backgroundImage: `url(${primaryImage})`,
-                  backgroundColor: '#f1f5f9',
-                }}
+            <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-muted mb-4">
+              <Image
+                src={primaryImage}
+                alt={listing.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                priority
               />
             </div>
 
             {/* Thumbnails if more images */}
             {listing.images.length > 1 && (
               <div className="grid grid-cols-4 gap-2">
-                {listing.images.slice(1, 5).map((image) => (
+                {listing.images.slice(1, 5).map((image, index) => (
                   <div
                     key={image.id}
-                    className="aspect-square rounded-md overflow-hidden bg-muted cursor-pointer hover:opacity-75 transition"
+                    className="relative aspect-square rounded-md overflow-hidden bg-muted cursor-pointer hover:opacity-75 transition"
                   >
-                    <div
-                      className="h-full w-full bg-cover bg-center"
-                      style={{
-                        backgroundImage: `url(${image.blobUrl})`,
-                        backgroundColor: '#f1f5f9',
-                      }}
+                    <Image
+                      src={image.blobUrl}
+                      alt={`${listing.title} - imagen ${index + 2}`}
+                      fill
+                      className="object-cover"
+                      sizes="25vw"
                     />
                   </div>
                 ))}

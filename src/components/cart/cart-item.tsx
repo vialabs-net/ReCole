@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Minus, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { updateCartItemQuantity, removeFromCart } from '@/app/actions/cart'
@@ -76,13 +77,15 @@ export function CartItem({ item }: CartItemProps) {
     <div className="flex gap-4 p-4 rounded-lg bg-muted/30">
       {/* Image */}
       <Link href={`/listing/${item.listing.id}`} className="flex-shrink-0">
-        <div
-          className="w-20 h-20 rounded-md bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${primaryImage})`,
-            backgroundColor: '#f1f5f9',
-          }}
-        />
+        <div className="relative w-20 h-20 rounded-md overflow-hidden bg-muted">
+          <Image
+            src={primaryImage}
+            alt={item.listing.title}
+            fill
+            className="object-cover"
+            sizes="80px"
+          />
+        </div>
       </Link>
 
       {/* Details */}
@@ -118,25 +121,27 @@ export function CartItem({ item }: CartItemProps) {
       {/* Actions */}
       <div className="flex flex-col items-end gap-2">
         {/* Quantity Controls */}
-        <div className="flex items-center gap-1 border rounded-md">
+        <div className="flex items-center gap-1 border rounded-md" role="group" aria-label="Controles de cantidad">
           <Button
             variant="ghost"
             size="icon"
             className="h-8 w-8"
             onClick={() => handleUpdateQuantity(item.quantity - 1)}
             disabled={isUpdating || item.quantity <= 1}
+            aria-label="Reducir cantidad"
           >
-            <Minus className="h-3 w-3" />
+            <Minus className="h-3 w-3" aria-hidden="true" />
           </Button>
-          <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+          <span className="w-8 text-center text-sm font-medium" aria-live="polite">{item.quantity}</span>
           <Button
             variant="ghost"
             size="icon"
             className="h-8 w-8"
             onClick={() => handleUpdateQuantity(item.quantity + 1)}
             disabled={isUpdating || item.quantity >= item.listing.quantityAvailable}
+            aria-label="Aumentar cantidad"
           >
-            <Plus className="h-3 w-3" />
+            <Plus className="h-3 w-3" aria-hidden="true" />
           </Button>
         </div>
 
@@ -152,8 +157,9 @@ export function CartItem({ item }: CartItemProps) {
           className="text-destructive hover:text-destructive h-8"
           onClick={handleRemove}
           disabled={isRemoving}
+          aria-label={isRemoving ? 'Eliminando producto' : 'Eliminar producto del carrito'}
         >
-          <Trash2 className="h-4 w-4 mr-1" />
+          <Trash2 className="h-4 w-4 mr-1" aria-hidden="true" />
           {isRemoving ? 'Eliminando...' : 'Eliminar'}
         </Button>
       </div>

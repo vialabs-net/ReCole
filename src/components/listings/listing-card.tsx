@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice } from '@/lib/utils'
@@ -24,20 +25,19 @@ export function ListingCard({ listing }: ListingCardProps) {
       <Card className="h-full transition-all hover:shadow-lg hover:scale-[1.02] cursor-pointer">
         <CardHeader className="p-0">
           <div className="relative aspect-square w-full overflow-hidden rounded-t-lg bg-muted">
-            {/* Placeholder for image - will be replaced with next/image */}
-            <div
-              className="h-full w-full bg-cover bg-center"
-              style={{
-                backgroundImage: `url(${primaryImage})`,
-                backgroundColor: '#f1f5f9',
-              }}
+            <Image
+              src={primaryImage}
+              alt={listing.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             />
             {listing.quantityAvailable > 1 && (
               <Badge
                 variant="secondary"
                 className="absolute top-2 right-2 bg-background/90 backdrop-blur-sm"
               >
-                <Package className="h-3 w-3 mr-1" />
+                <Package className="h-3 w-3 mr-1" aria-hidden="true" />
                 {listing.quantityAvailable} disponibles
               </Badge>
             )}
@@ -68,7 +68,7 @@ export function ListingCard({ listing }: ListingCardProps) {
           </div>
 
           <div className="flex items-center gap-1 text-xs text-muted-foreground mb-3">
-            <MapPin className="h-3 w-3" />
+            <MapPin className="h-3 w-3" aria-hidden="true" />
             <span className="line-clamp-1">{listing.school.name}</span>
           </div>
 
