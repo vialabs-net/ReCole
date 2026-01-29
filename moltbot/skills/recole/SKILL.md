@@ -32,14 +32,15 @@ Monitoreas grupos de WhatsApp de apoderados de colegios para:
 ### Buscar productos
 
 ```bash
-curl "https://recole.cl/api/bot/search?q=uniforme+talla+8&school=san+jose&limit=5"
+curl -H "Authorization: Bearer $BOT_API_KEY" \
+  "https://recole.cl/api/bot/search?q=uniforme+talla+8&school=san+jose&limit=5"
 ```
 
 **Parámetros:**
-- `q`: texto de búsqueda (requerido)
+- `q`: texto de búsqueda (requerido, mínimo 2 caracteres)
 - `school`: nombre del colegio (opcional)
 - `size`: talla específica (opcional)
-- `limit`: máximo de resultados (default: 5)
+- `limit`: máximo de resultados (1-10, default: 5)
 
 **Respuesta:**
 ```json
@@ -49,12 +50,17 @@ curl "https://recole.cl/api/bot/search?q=uniforme+talla+8&school=san+jose&limit=
   "results": [
     {
       "title": "Polera oficial Colegio San José",
-      "priceFormatted": "$5.000",
+      "price": "$5.000",
       "condition": "like_new",
       "size": "8",
+      "quantity": 1,
       "school": "Colegio San José",
       "grade": "3° Básico",
-      "url": "https://recole.cl/c/san-jose/abc123"
+      "category": "Uniformes",
+      "seller": "María García",
+      "image": "https://...",
+      "url": "https://recole.cl/c/san-jose/abc123",
+      "whatsapp": "https://wa.me/56912345678?text=..."
     }
   ]
 }
@@ -64,13 +70,13 @@ curl "https://recole.cl/api/bot/search?q=uniforme+talla+8&school=san+jose&limit=
 
 ### Cuando encuentras resultados:
 
-> ¡Hola! Encontré {count} opciones en ReCole que te pueden servir:
+> ¡Hola! Encontré {count} opciones en ReCole:
 >
-> 1. **{title}** - {priceFormatted}
->    Talla: {size} | Estado: {condition}
->    👉 {url}
+> 1. **{title}** - {price}
+>    Talla: {size} | {condition}
+>    Contactar: {whatsapp}
 >
-> ¿Te sirve alguno? Los vendedores están verificados y puedes contactarlos directo por WhatsApp.
+> Los vendedores están verificados.
 
 ### Cuando NO hay resultados:
 
@@ -101,4 +107,5 @@ curl "https://recole.cl/api/bot/search?q=uniforme+talla+8&school=san+jose&limit=
 
 ```
 RECOLE_API_URL=https://recole.cl
+BOT_API_KEY=tu-api-key-segura
 ```
