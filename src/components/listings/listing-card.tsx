@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatPrice } from '@/lib/utils'
+import { CONDITION_LABELS, BLUR_DATA_URL, PLACEHOLDER_IMAGE } from '@/lib/constants'
 import type { ListingWithDetails } from '@/types'
 import { MapPin, Package } from 'lucide-react'
 
@@ -10,18 +11,8 @@ interface ListingCardProps {
   listing: ListingWithDetails
 }
 
-const conditionLabels: Record<string, string> = {
-  new: 'Nuevo',
-  like_new: 'Como Nuevo',
-  good: 'Bueno',
-  fair: 'Aceptable',
-}
-
-// Simple blur placeholder data URL
-const blurDataURL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAgEDAwUBAAAAAAAAAAAAAQIDAAQRBSExEhMiQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gAMAwEAAhEDEQA/AJmm3V1Bc3KXc0k6d0kLI5YDAGBvgb5PlWrqKSilBOxiT9Soq1K6jMqeP//Z'
-
 export function ListingCard({ listing }: ListingCardProps) {
-  const primaryImage = listing.images[0]?.blobUrl || '/placeholder-product.png'
+  const primaryImage = listing.images[0]?.blobUrl || PLACEHOLDER_IMAGE
 
   return (
     <Link href={`/listing/${listing.id}`}>
@@ -35,7 +26,7 @@ export function ListingCard({ listing }: ListingCardProps) {
               className="object-cover transition-opacity duration-300"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               placeholder="blur"
-              blurDataURL={blurDataURL}
+              blurDataURL={BLUR_DATA_URL}
             />
             {listing.quantityAvailable > 1 && (
               <Badge
@@ -88,7 +79,7 @@ export function ListingCard({ listing }: ListingCardProps) {
               </div>
             </div>
             <Badge variant="secondary">
-              {conditionLabels[listing.condition]}
+              {CONDITION_LABELS[listing.condition]}
             </Badge>
           </div>
         </CardContent>

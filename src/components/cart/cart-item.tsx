@@ -7,6 +7,7 @@ import { Minus, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { updateCartItemQuantity, removeFromCart } from '@/app/actions/cart'
 import { formatPrice } from '@/lib/utils'
+import { CONDITION_LABELS, BLUR_DATA_URL, PLACEHOLDER_IMAGE } from '@/lib/constants'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
@@ -29,22 +30,12 @@ interface CartItemProps {
   }
 }
 
-const conditionLabels: Record<string, string> = {
-  new: 'Nuevo',
-  like_new: 'Como Nuevo',
-  good: 'Bueno',
-  fair: 'Aceptable',
-}
-
-// Simple blur placeholder data URL
-const blurDataURL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAgEDAwUBAAAAAAAAAAAAAQIDAAQRBSExEhMiQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gAMAwEAAhEDEQA/AJmm3V1Bc3KXc0k6d0kLI5YDAGBvgb5PlWrqKSilBOxiT9Soq1K6jMqeP//Z'
-
 export function CartItem({ item }: CartItemProps) {
   const router = useRouter()
   const [isUpdating, setIsUpdating] = useState(false)
   const [isRemoving, setIsRemoving] = useState(false)
 
-  const primaryImage = item.listing.images[0]?.blobUrl || '/placeholder-product.png'
+  const primaryImage = item.listing.images[0]?.blobUrl || PLACEHOLDER_IMAGE
 
   const handleUpdateQuantity = async (newQuantity: number) => {
     if (newQuantity > item.listing.quantityAvailable) {
@@ -88,7 +79,7 @@ export function CartItem({ item }: CartItemProps) {
             className="object-cover"
             sizes="80px"
             placeholder="blur"
-            blurDataURL={blurDataURL}
+            blurDataURL={BLUR_DATA_URL}
           />
         </div>
       </Link>
@@ -103,7 +94,7 @@ export function CartItem({ item }: CartItemProps) {
         <div className="flex flex-wrap gap-2 mt-1 text-xs text-muted-foreground">
           <span>{item.listing.category.name}</span>
           <span>•</span>
-          <span>{conditionLabels[item.listing.condition]}</span>
+          <span>{CONDITION_LABELS[item.listing.condition]}</span>
           {item.listing.size && (
             <>
               <span>•</span>

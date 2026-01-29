@@ -6,22 +6,13 @@ import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { getListingById } from '@/app/actions/listings'
 import { AddToCartButton } from '@/components/listings/add-to-cart-button'
 import { formatPrice } from '@/lib/utils'
+import { CONDITION_LABELS, BLUR_DATA_URL, PLACEHOLDER_IMAGE } from '@/lib/constants'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 
 interface ListingPageProps {
   params: { id: string }
 }
-
-const conditionLabels: Record<string, string> = {
-  new: 'Nuevo',
-  like_new: 'Como Nuevo',
-  good: 'Bueno',
-  fair: 'Aceptable',
-}
-
-// Simple blur placeholder data URL
-const blurDataURL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAgEDAwUBAAAAAAAAAAAAAQIDAAQRBSExEhMiQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gAMAwEAAhEDEQA/AJmm3V1Bc3KXc0k6d0kLI5YDAGBvgb5PlWrqKSilBOxiT9Soq1K6jMqeP//Z'
 
 export default async function ListingPage({ params }: ListingPageProps) {
   const { id } = await params
@@ -32,7 +23,7 @@ export default async function ListingPage({ params }: ListingPageProps) {
     notFound()
   }
 
-  const primaryImage = listing.images[0]?.blobUrl || '/placeholder-product.png'
+  const primaryImage = listing.images[0]?.blobUrl || PLACEHOLDER_IMAGE
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -79,7 +70,7 @@ export default async function ListingPage({ params }: ListingPageProps) {
                       className="object-cover"
                       sizes="25vw"
                       placeholder="blur"
-                      blurDataURL={blurDataURL}
+                      blurDataURL={BLUR_DATA_URL}
                     />
                   </div>
                 ))}
@@ -93,7 +84,7 @@ export default async function ListingPage({ params }: ListingPageProps) {
               <div className="flex items-center gap-2 mb-3">
                 <Badge variant="outline">{listing.category.name}</Badge>
                 <Badge variant="secondary">
-                  {conditionLabels[listing.condition]}
+                  {CONDITION_LABELS[listing.condition]}
                 </Badge>
                 {listing.size && (
                   <Badge variant="outline">Talla {listing.size}</Badge>
@@ -171,7 +162,7 @@ export default async function ListingPage({ params }: ListingPageProps) {
                 <div>
                   <dt className="text-muted-foreground">Estado</dt>
                   <dd className="font-medium">
-                    {conditionLabels[listing.condition]}
+                    {CONDITION_LABELS[listing.condition]}
                   </dd>
                 </div>
                 {listing.size && (
