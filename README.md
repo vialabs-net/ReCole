@@ -138,15 +138,17 @@ prisma/
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `BLOB_READ_WRITE_TOKEN`
 
-## Siguientes Pasos
+## Testing
 
-- [ ] Implementar feed de colegio con filtros
-- [ ] Detalle de listing con WhatsApp contact
-- [ ] Formulario de publicación con upload
-- [ ] Carrito de compras funcional
-- [ ] "Mis publicaciones"
-- [ ] Onboarding para nuevos usuarios
+```bash
+npm run test        # Watch mode
+npm run test:run    # Single run
+```
 
-## Licencia
+## Contributing
 
-Privado - Todos los derechos reservados
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
