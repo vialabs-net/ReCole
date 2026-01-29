@@ -1,8 +1,11 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 import { ListingFilters } from '@/types'
 import { normalizeGradeSearch, normalizeCategorySearch } from '@/lib/search-helpers'
+import { LISTING_LIMITS } from '@/lib/constants'
+import { deleteImages } from '@/lib/blob'
 import { revalidatePath } from 'next/cache'
 import { getUser, getUserProfile } from './auth'
 
@@ -10,21 +13,21 @@ import { getUser, getUserProfile } from './auth'
  * Get listings with filters
  */
 export async function getListings(filters: ListingFilters = {}) {
-  const where: any = {
+  const where: Prisma.ListingWhereInput = {
     status: 'active',
   }
 
   // Base filters (siempre se aplican)
   if (filters.schoolSlug) {
-    where.school = { slug: filters.schoolSlug }
+    where.school = { is: { slug: filters.schoolSlug } }
   }
 
   if (filters.gradeSlug) {
-    where.grade = { slug: filters.gradeSlug }
+    where.grade = { is: { slug: filters.gradeSlug } }
   }
 
   if (filters.categorySlug) {
-    where.category = { slug: filters.categorySlug }
+    where.category = { is: { slug: filters.categorySlug } }
   }
 
   if (filters.condition) {
@@ -50,30 +53,28 @@ export async function getListings(filters: ListingFilters = {}) {
     const gradeVariants = normalizeGradeSearch(filters.search)
     const categoryVariants = normalizeCategorySearch(filters.search)
 
+    const gradeConditions: Prisma.ListingWhereInput[] = gradeVariants.map(variant => ({
+      grade: { is: { name: { contains: variant, mode: 'insensitive' } } },
+    }))
+
+    const categoryConditions: Prisma.ListingWhereInput[] = categoryVariants.map(variant => ({
+      category: { is: { name: { contains: variant, mode: 'insensitive' } } },
+    }))
+
     where.AND = [
       {
         OR: [
           { title: { contains: filters.search, mode: 'insensitive' } },
           { description: { contains: filters.search, mode: 'insensitive' } },
-          // Buscar en nombre del nivel con variantes
-          ...gradeVariants.map(variant => ({
-            grade: {
-              name: { contains: variant, mode: 'insensitive' },
-            },
-          })),
-          // Buscar en nombre de categoría con variantes
-          ...categoryVariants.map(variant => ({
-            category: {
-              name: { contains: variant, mode: 'insensitive' },
-            },
-          })),
+          ...gradeConditions,
+          ...categoryConditions,
         ],
       },
     ]
   }
 
   // Determine sort order
-  let orderBy: any = { createdAt: 'desc' }
+  let orderBy: Prisma.ListingOrderByWithRelationInput = { createdAt: 'desc' }
   if (filters.sort === 'price_asc') {
     orderBy = { price: 'asc' }
   } else if (filters.sort === 'price_desc') {
@@ -92,7 +93,7 @@ export async function getListings(filters: ListingFilters = {}) {
       },
     },
     orderBy,
-    take: 24, // Pagination: 24 items per page
+    take: LISTING_LIMITS.ITEMS_PER_PAGE,
   })
 
   return listings
@@ -248,10 +249,10 @@ export async function deleteListing(listingId: string) {
     throw new Error('Perfil no encontrado')
   }
 
-  // Verify ownership
+  // Verify ownership and get images
   const listing = await prisma.listing.findUnique({
     where: { id: listingId },
-    include: { school: true },
+    include: { school: true, images: true },
   })
 
   if (!listing) {
@@ -262,7 +263,17 @@ export async function deleteListing(listingId: string) {
     throw new Error('No tienes permiso para eliminar esta publicación')
   }
 
-  // Delete listing (images will be cascade deleted)
+  // Delete images from blob storage
+  if (listing.images.length > 0) {
+    try {
+      await deleteImages(listing.images.map(img => img.blobUrl))
+    } catch (error) {
+      // Log error but continue with deletion - images may already be deleted
+      console.error('Error deleting images from blob storage:', error)
+    }
+  }
+
+  // Delete listing (images records will be cascade deleted from DB)
   await prisma.listing.delete({
     where: { id: listingId },
   })
