@@ -122,21 +122,50 @@ prisma/
 
 ## Deployment
 
-### Vercel
+### Vercel con GitHub Actions
 
-1. Push a GitHub
-2. Importar proyecto en Vercel
-3. Configurar variables de entorno en Vercel
-4. Deploy automático en cada push a `trunk`
+1. **Crear proyecto en Vercel**
+   ```bash
+   npm i -g vercel
+   vercel link
+   ```
 
-### Variables de Entorno Requeridas
+2. **Obtener credenciales de Vercel**
+   - `VERCEL_TOKEN`: Settings → Tokens → Create
+   - `VERCEL_ORG_ID`: En `.vercel/project.json` después de `vercel link`
+   - `VERCEL_PROJECT_ID`: En `.vercel/project.json`
 
-- `DATABASE_URL`
-- `DIRECT_URL`
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `BLOB_READ_WRITE_TOKEN`
+3. **Configurar GitHub Secrets**
+
+   En tu repo → Settings → Secrets → Actions, agregar:
+   - `VERCEL_TOKEN`
+   - `VERCEL_ORG_ID`
+   - `VERCEL_PROJECT_ID`
+
+4. **Configurar dominio personalizado**
+
+   En Vercel Dashboard → Project → Settings → Domains:
+   - Agregar `recole.lilicurl.com`
+   - Configurar DNS: `CNAME recole → cname.vercel-dns.com`
+
+5. **Deploy automático**
+
+   Cada push a `trunk` ejecuta tests y despliega automáticamente.
+
+### Variables de Entorno en Vercel
+
+Configurar en Vercel Dashboard → Project → Settings → Environment Variables:
+
+| Variable | Descripción |
+|----------|-------------|
+| `DATABASE_URL` | PostgreSQL connection string (pooled) |
+| `DIRECT_URL` | PostgreSQL direct connection |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL del proyecto Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clave anónima de Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clave de servicio de Supabase |
+| `BLOB_READ_WRITE_TOKEN` | Token de Vercel Blob |
+| `APP_URL` | `https://recole.lilicurl.com` |
+| `BOT_API_KEY` | Clave secreta para API del bot |
 
 ## Testing
 
