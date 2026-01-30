@@ -4,22 +4,23 @@ import { normalizeGradeSearch, normalizeCategorySearch } from '@/lib/search-help
 import { Prisma } from '@prisma/client'
 import { BOT_API_LIMITS } from '@/lib/constants'
 
+// Max input length to prevent DoS
+const MAX_INPUT_LENGTH = 100
+
 export async function GET(request: NextRequest) {
   const apiKey = process.env.BOT_API_KEY
 
-  // Require API key in production
-  if (process.env.NODE_ENV === 'production' && !apiKey) {
-    console.error('BOT_API_KEY not configured in production')
+  // Always require API key (this endpoint exposes phone numbers)
+  if (!apiKey) {
+    console.error('BOT_API_KEY not configured')
     return NextResponse.json({ error: 'API no configurada' }, { status: 500 })
   }
 
-  // Validate API key if configured
-  if (apiKey) {
-    const authHeader = request.headers.get('authorization')
-    const token = authHeader?.replace('Bearer ', '')
-    if (token !== apiKey) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
-    }
+  // Validate API key
+  const authHeader = request.headers.get('authorization')
+  const token = authHeader?.replace('Bearer ', '')
+  if (token !== apiKey) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
 
   const searchParams = request.nextUrl.searchParams
@@ -30,6 +31,17 @@ export async function GET(request: NextRequest) {
   const limit = Number.isNaN(limitParam)
     ? BOT_API_LIMITS.DEFAULT_LIMIT
     : Math.min(Math.max(limitParam, 1), BOT_API_LIMITS.MAX_LIMIT)
+
+  // Input length validation to prevent DoS
+  if (query && query.length > MAX_INPUT_LENGTH) {
+    return NextResponse.json({ error: 'Query demasiado largo' }, { status: 400 })
+  }
+  if (schoolName && schoolName.length > MAX_INPUT_LENGTH) {
+    return NextResponse.json({ error: 'Nombre de colegio demasiado largo' }, { status: 400 })
+  }
+  if (size && size.length > 20) {
+    return NextResponse.json({ error: 'Talla inválida' }, { status: 400 })
+  }
 
   if (!query || query.trim().length < BOT_API_LIMITS.MIN_QUERY_LENGTH) {
     return NextResponse.json(
@@ -104,8 +116,10 @@ export async function GET(request: NextRequest) {
         grade: listing.grade.name,
         category: listing.category.name,
         seller: listing.seller.name,
+        // Only show last 4 digits for display, full phone in whatsapp URL
+        phone_hint: `****${phone.slice(-4)}`,
         image: listing.images[0]?.blobUrl || null,
-        url: `${baseUrl}/c/${listing.school.slug}/${listing.id}`,
+        url: `${baseUrl}/listing/${listing.id}`,
         whatsapp: `https://wa.me/${phone}?text=${message}`,
       }
     })
