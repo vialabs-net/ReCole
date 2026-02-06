@@ -1,0 +1,19 @@
+name: Sync to Vercel Repo
+
+on:
+  push:
+    branches: [trunk]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to lilicurl/recole-v
+        run: |
+          git remote add deploy https://x-access-token:${{ secrets.DEPLOY_TOKEN }}@github.com/lilicurl/recole-v.git
+          git push deploy trunk:main --force
