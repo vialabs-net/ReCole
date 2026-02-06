@@ -16,9 +16,9 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '10mb',
       allowedOrigins: [
-        'redesigned-rotary-phone-xg5v46v6ghv55w-3000.app.github.dev',
         'localhost:3000',
-      ],
+        process.env.ALLOWED_ORIGIN,
+      ].filter(Boolean),
     },
   },
   async headers() {
